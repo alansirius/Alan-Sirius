@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>李洲昊 · AI 产品经理作品集</title>
+  <link rel="preconnect" href="https://miaoda.feishu.cn" />
+  <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Space+Grotesk:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://sf3-scmcdn-cn.feishucdn.com/obj/feishu-static/miaoda/coding-unpkg-sdk/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://sf3-scmcdn-cn.feishucdn.com/obj/feishu-static/miaoda/coding-unpkg-sdk/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://sf3-scmcdn-cn.feishucdn.com/obj/feishu-static/miaoda/coding-unpkg-sdk/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="data.jsx"></script>
+  <script type="text/babel" src="sections.jsx"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "accent": "#FF6B35",
+      "fontScale": 100,
+      "texture": "dots"
+    }/*EDITMODE-END*/;
+
+    function App() {
+      const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const [active, setActive] = useState(null);
+      const [lightbox, setLightbox] = useState(null);
+      const openImage = (src, caption) => setLightbox({ src, caption });
+      useReveal();
+
+      // apply tweaks to :root
+      useEffect(() => {
+        const r = document.documentElement;
+        r.style.setProperty("--accent", t.accent);
+        document.body.style.fontSize = (t.fontScale / 100) + "rem";
+      }, [t.accent, t.fontScale]);
+
+      useEffect(() => {
+        const b = document.body;
+        if (t.texture === "none") { b.style.backgroundImage = "none"; }
+        else if (t.texture === "grid") {
+          b.style.backgroundImage =
+            "linear-gradient(var(--paper-2) 1px, transparent 1px), linear-gradient(90deg, var(--paper-2) 1px, transparent 1px)";
+          b.style.backgroundSize = "26px 26px";
+        } else {
+          b.style.backgroundImage = "radial-gradient(var(--paper-2) 1.4px, transparent 1.4px)";
+          b.style.backgroundSize = "22px 22px";
+        }
+      }, [t.texture]);
+
+      return (
+        <React.Fragment>
+          <Nav />
+          <Hero />
+          <Marquee />
+          <Education />
+          <Experience onImage={openImage} />
+          <Work onOpen={setActive} />
+          <Skills />
+          <Contact />
+          {active && <ProjectModal project={active} onClose={() => setActive(null)} onImage={openImage} />}
+          {lightbox && <Lightbox src={lightbox.src} caption={lightbox.caption} onClose={() => setLightbox(null)} />}
+
+          <TweaksPanel>
+            <TweakSection label="主题色" />
+            <TweakColor label="强调色" value={t.accent}
+              options={["#FF6B35", "#2D5BFF", "#14C6A4", "#FF4D9D"]}
+              onChange={(v) => setTweak("accent", v)} />
+            <TweakSection label="排版" />
+            <TweakSlider label="字号" value={t.fontScale} min={90} max={115} unit="%"
+              onChange={(v) => setTweak("fontScale", v)} />
+            <TweakSection label="背景纹理" />
+            <TweakRadio label="纹理" value={t.texture}
+              options={["dots", "grid", "none"]}
+              onChange={(v) => setTweak("texture", v)} />
+          </TweaksPanel>
+        </React.Fragment>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+    // announce upgradeable
+    function announceUpgrade() {
+      window.parent.postMessage({ type: "miaoda:upgrade:available", kind: "interactive-prototype" }, "*");
+    }
+    announceUpgrade();
+    if (document.readyState !== "complete") window.addEventListener("load", announceUpgrade, { once: true });
+  </script>
+</body>
+</html>
