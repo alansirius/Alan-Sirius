@@ -532,7 +532,7 @@ body {
 /* ============================================================
    SKILLS
    ============================================================ */
-.skills__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
+.skills__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
 .skill-card { padding: 26px 24px; }
 .skill-card__icon {
   width: 52px; height: 52px; border-radius: 14px;

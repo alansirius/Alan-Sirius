@@ -3,10 +3,8 @@
    Exports to window: PORTFOLIO, Icon
    ============================================================ */
 
-// 保留原网页中的插画头像
-const AVATAR = "/spark/app/app_17bwx9p5171/runtime/api/v1/storage/object/bucket_aadkpk6zu66bu_static/static%2Faadkpk4ezi2iq_ve_miaoda";
-
 const A = (f) => "assets/" + f; // 本地真实截图
+const AVATAR = A("avatar.jpg");
 
 const PORTFOLIO = {
   name: "李洲昊",
