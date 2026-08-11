@@ -23,12 +23,35 @@ function useReveal() {
 /* ---------------- NAV ---------------- */
 function Nav() {
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("");
   const links = [
+    ["#about", "关于我"],
     ["#education", "教育"],
     ["#experience", "实习"],
     ["#work", "项目"],
     ["#skills", "技能"],
+    ["#contact", "联系我"],
   ];
+  useEffect(() => {
+    const ids = links.map(([href]) => href.slice(1));
+    const spy = () => {
+      const y = window.scrollY + 140;
+      let cur = "";
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top + window.scrollY <= y) cur = id;
+      }
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 40) cur = "contact";
+      setActive(cur);
+    };
+    spy();
+    window.addEventListener("scroll", spy, { passive: true });
+    window.addEventListener("resize", spy, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", spy);
+      window.removeEventListener("resize", spy);
+    };
+  }, []);
   return (
     <nav className="nav">
       <div className="nav__brand">
@@ -37,9 +60,13 @@ function Nav() {
       </div>
       <div className={"nav__links" + (open ? " is-open" : "")}>
         {links.map(([href, label]) => (
-          <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
+          <a
+            key={href}
+            href={href}
+            className={"nav__tab" + (active === href.slice(1) ? " is-active" : "")}
+            onClick={() => setOpen(false)}
+          >{label}</a>
         ))}
-        <a href="#contact" className="btn nav__cta" onClick={() => setOpen(false)}>联系我</a>
       </div>
       <button className="nav__burger" aria-label="菜单" onClick={() => setOpen((o) => !o)}>
         <span></span>
@@ -107,15 +134,16 @@ function Hero() {
   const stageRef = useRef(null);
   const h = PORTFOLIO.hero;
   return (
-    <header className="hero wrap">
+    <header className="hero wrap" id="about">
       <div className="hero__grid">
         <div className="hero__intro">
           <span className="eyebrow">{h.kicker}</span>
           <h1 className="hero__title">
-            你好，我是 <span className="hl">{PORTFOLIO.name}</span>。
+            你好，<br />
+            <span className="hero__name">我是 <span className="hl">{PORTFOLIO.name}</span>。</span>
           </h1>
           <p className="hero__tagline">{PORTFOLIO.aboutLead}</p>
-          <p className="hero__lead">{h.statement}</p>
+          <p className="hero__lead" dangerouslySetInnerHTML={{ __html: h.statement }} />
           <div className="hero__cta">
             <a href="#work" className="btn">看我的项目 <Icon name="arrow" style={{ width: 18, height: 18 }} /></a>
             <a href={PORTFOLIO.hero.primaryHref || "https://github.com/alansirius"} className="btn btn--ghost">GitHub</a>
@@ -182,7 +210,7 @@ function Education() {
               <div className="edu-card__period">{e.period}</div>
               <h3 className="edu-card__school">{e.school}</h3>
               <div className="edu-card__degree" style={{ color: e.color }}>{e.degree}</div>
-              <p className="edu-card__detail">{e.detail}</p>
+              <p className="edu-card__detail" dangerouslySetInnerHTML={{ __html: e.detail }} />
             </div>
           </article>
         ))}
@@ -255,7 +283,6 @@ function Experience({ onImage }) {
           <span className="section__num">// 03</span>
           <h2 className="section__title">实习经历</h2>
         </div>
-        <p className="section__note reveal">4 段 AI 产品实习，从 B 端智能体到内容 Agent 与学术工具。</p>
       </div>
 
       <div className="exp reveal">
@@ -284,7 +311,7 @@ function Experience({ onImage }) {
           </div>
           <div className={"exp__intro" + (exp.visuals ? " exp__intro--media" : "")}>
             <div className="exp__intro-text">
-              <p className="exp__summary">{exp.summary}</p>
+              <p className="exp__summary" dangerouslySetInnerHTML={{ __html: exp.summary }} />
               <div className="exp__metrics">
                 {exp.metrics.map((m, i) => (
                   <div key={i} className="exp__metric">
@@ -301,14 +328,14 @@ function Experience({ onImage }) {
             {exp.work.map((w, i) => (
               <div key={i} className="exp__work-item">
                 <span className="exp__work-tag" style={{ borderColor: exp.color, color: exp.color }}>{w.label}</span>
-                <p>{w.body}</p>
+                <p dangerouslySetInnerHTML={{ __html: w.body }} />
               </div>
             ))}
           </div>
 
           <div className="exp__think" style={{ borderColor: exp.color }}>
             <span className="exp__think-mark" style={{ background: exp.color }}>我的思考</span>
-            <p>{exp.thinking}</p>
+            <p dangerouslySetInnerHTML={{ __html: exp.thinking }} />
           </div>
         </div>
       </div>
@@ -318,23 +345,13 @@ function Experience({ onImage }) {
 
 /* ---------------- WORK (projects) ---------------- */
 function Work({ onOpen }) {
-  const [filter, setFilter] = useState("全部");
-  const list = PORTFOLIO.projects.filter((p) => filter === "全部" || p.tag === filter);
+  const list = PORTFOLIO.projects;
   return (
     <section className="section wrap" id="work">
       <div className="section__head">
         <div className="reveal">
           <span className="section__num">// 04</span>
           <h2 className="section__title">个人项目</h2>
-        </div>
-        <div className="work__filters reveal">
-          {PORTFOLIO.filters.map((f) => (
-            <button
-              key={f}
-              className={"filter" + (filter === f ? " is-active" : "")}
-              onClick={() => setFilter(f)}
-            >{f}</button>
-          ))}
         </div>
       </div>
       <div className="work__grid">
@@ -348,7 +365,7 @@ function Work({ onOpen }) {
             <div className="card__body">
               <h3 className="card__title">{p.title} <span className="card__en">{p.en}</span></h3>
               <div className="card__role">{p.cat}</div>
-              <p className="card__desc">{p.desc}</p>
+              <p className="card__desc" dangerouslySetInnerHTML={{ __html: p.desc }} />
               <div className="card__metrics">
                 {p.metrics.slice(0, 3).map((m, i) => (
                   <div key={i} className="card__metric">
@@ -371,6 +388,12 @@ function Work({ onOpen }) {
 }
 
 /* ---------------- PROJECT MODAL ---------------- */
+function Bullets({ items }) {
+  return Array.isArray(items)
+    ? <ul>{items.map((x, i) => <li key={i} dangerouslySetInnerHTML={{ __html: x }} />)}</ul>
+    : <p dangerouslySetInnerHTML={{ __html: items }} />;
+}
+
 function ProjectModal({ project, onClose, onImage }) {
   const [idx, setIdx] = useState(0);
   useEffect(() => {
@@ -388,7 +411,25 @@ function ProjectModal({ project, onClose, onImage }) {
         <div className="modal__inner">
         <div className="modal__media">
           <div className="modal__stage">
+            {p.images.length > 1 && (
+              <button
+                className="modal__arrow modal__arrow--prev"
+                onClick={() => setIdx((idx - 1 + p.images.length) % p.images.length)}
+                aria-label="上一张"
+              >
+                <Icon name="arrow" style={{ width: 22, height: 22, transform: "rotate(180deg)" }} />
+              </button>
+            )}
             <img src={p.images[idx]} alt={p.title} onClick={() => onImage(p.images[idx])} />
+            {p.images.length > 1 && (
+              <button
+                className="modal__arrow modal__arrow--next"
+                onClick={() => setIdx((idx + 1) % p.images.length)}
+                aria-label="下一张"
+              >
+                <Icon name="arrow" style={{ width: 22, height: 22 }} />
+              </button>
+            )}
           </div>
           {p.images.length > 1 && (
             <div className="modal__thumbs">
@@ -420,11 +461,11 @@ function ProjectModal({ project, onClose, onImage }) {
 
           <div className="modal__section">
             <h4>问题</h4>
-            <p>{p.pain}</p>
+            <Bullets items={p.pain} />
           </div>
           <div className="modal__section">
             <h4>我的解法</h4>
-            <p>{p.approach}</p>
+            <Bullets items={p.approach} />
           </div>
           <div className="modal__section">
             <h4>亮点</h4>
@@ -438,6 +479,18 @@ function ProjectModal({ project, onClose, onImage }) {
               {p.stack.map((s) => <span key={s} className="mini-chip mini-chip--ghost">{s}</span>)}
             </div>
           </div>
+          {p.evalStandard && (
+            <div className="modal__section">
+              <h4>评测标准</h4>
+              <Bullets items={p.evalStandard} />
+            </div>
+          )}
+          {p.evalSystem && (
+            <div className="modal__section">
+              <h4>评测体系</h4>
+              <Bullets items={p.evalSystem} />
+            </div>
+          )}
         </div>
         </div>
       </div>

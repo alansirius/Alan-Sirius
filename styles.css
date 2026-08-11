@@ -186,7 +186,8 @@ body {
   transition: background .15s;
 }
 .nav__links a:hover { background: var(--paper-2); }
-.nav__cta { margin-left: 6px; }
+.nav__links a.is-active,
+.nav__links a.is-active:hover { background: var(--accent); color: var(--ink); }
 .nav__burger {
   display: none;
   background: #fff;
@@ -219,11 +220,12 @@ body {
 .hero__title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(2.8rem, 7vw, 5.4rem);
-  line-height: .92;
+  font-size: clamp(2.6rem, 6.5vw, 5rem);
+  line-height: 1.05;
   letter-spacing: -.03em;
   margin: 20px 0 22px;
 }
+.hero__name { white-space: nowrap; }
 .hero__title .hl { position: relative; white-space: nowrap; }
 .hero__title .hl::after {
   content: ""; position: absolute; left: -4px; right: -4px; bottom: 6px;
@@ -234,8 +236,8 @@ body {
 .hero__tagline {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
-  line-height: 1.3;
+  font-size: clamp(1.2rem, 2.1vw, 1.6rem);
+  line-height: 1.45;
   letter-spacing: -.01em;
   margin: 0 0 16px;
   max-width: 22ch;
@@ -245,8 +247,8 @@ body {
   background: var(--accent); border-radius: 4px; margin-top: 14px;
 }
 .hero__lead {
-  font-size: 1.05rem;
-  line-height: 1.65;
+  font-size: 1rem;
+  line-height: 1.8;
   max-width: 46ch;
   color: rgba(32,26,46,.78);
 }
@@ -348,15 +350,6 @@ body {
 /* ============================================================
    WORK
    ============================================================ */
-.work__filters { display: flex; gap: 10px; flex-wrap: wrap; }
-.filter {
-  font-family: var(--font-mono); font-weight: 700; font-size: .82rem;
-  padding: 9px 16px; border-radius: 999px;
-  border: 2px solid var(--ink); background: #fff; cursor: pointer;
-  transition: transform .1s;
-}
-.filter:hover { transform: translateY(-2px); }
-.filter.is-active { background: var(--ink); color: var(--paper); }
 
 .work__grid {
   display: grid;
@@ -418,9 +411,21 @@ body {
 .modal__inner { display: grid; grid-template-columns: 1.15fr .85fr; }
 .modal__media { position: relative; background: var(--paper-2); border-right: var(--line) solid var(--ink); display: flex; flex-direction: column; }
 .modal__stage {
-  flex: 1; display: flex; align-items: center; justify-content: center;
+  position: relative; flex: 1; display: flex; align-items: center; justify-content: center;
   padding: 18px 12px; min-height: 420px;
 }
+.modal__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 5; width: 42px; height: 42px; border-radius: 50%;
+  border: var(--line) solid var(--ink); background: #fff; cursor: pointer;
+  box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .18s ease;
+}
+.modal__stage:hover .modal__arrow,
+.modal__arrow:focus-visible { opacity: .9; pointer-events: auto; }
+.modal__arrow:hover { opacity: 1; }
+.modal__arrow--prev { left: 10px; }
+.modal__arrow--next { right: 10px; }
 .modal__stage img { max-width: 100%; max-height: 74vh; width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: var(--shadow); cursor: zoom-in; background: #fff; }
 .modal__close {
   position: absolute; top: 16px; right: 16px;
@@ -494,7 +499,7 @@ body {
 .exp__metric b { font-family: var(--font-display); font-size: 1.9rem; display: block; line-height: 1; }
 .exp__metric span { font-family: var(--font-mono); font-size: .72rem; color: rgba(32,26,46,.6); }
 .exp__work { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
-.exp__work-item { display: grid; grid-template-columns: 92px 1fr; gap: 16px; align-items: start; }
+.exp__work-item { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: start; }
 .exp__work-tag {
   font-family: var(--font-mono); font-weight: 700; font-size: .76rem;
   padding: 6px 10px; border: 2px solid; border-radius: 10px; text-align: center;
@@ -652,7 +657,6 @@ body {
     border-radius: 18px; padding: 12px; box-shadow: var(--shadow);
   }
   .nav__links.is-open a { padding: 12px; }
-  .nav__cta { display: none; }
   .nav__burger { display: flex; }
   .section { padding: 68px 0; }
   .hero { padding: 120px 0 40px; }
