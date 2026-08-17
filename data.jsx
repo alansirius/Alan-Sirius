@@ -259,9 +259,9 @@ const PORTFOLIO = {
       highlights: ["投递管理", "AI 简历", "面试 Mock", "录音/记录复盘"],
       stack: ["React", "Python FastAPI", "SQLite"],
       metrics: [
-        { v: "412", l: "累计注册用户" },
-        { v: "54", l: "日均活跃 DAU" },
-        { v: "31%", l: "7 日留存" },
+        { v: "1500+", l: "累计注册用户" },
+        { v: "137", l: "日均活跃 DAU" },
+        { v: "26.1%", l: "7 日留存" },
         { v: "6800+", l: "累计 AI 交互" },
       ],
     },
